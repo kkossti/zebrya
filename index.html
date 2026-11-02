@@ -13,8 +13,7 @@ header h1{color:#fff;text-shadow:0 2px 4px #000;font-size:26px}
 @keyframes hop{0%,100%{transform:translateY(0)}30%{transform:translateY(-14px) rotate(-4deg)}60%{transform:translateY(0)}}
 .spin{animation:spin .6s linear!important}
 @keyframes spin{to{transform:rotate(360deg)}}
-#sync{margin-top:8px;font-size:13px;padding:4px 12px;border-radius:12px;display:inline-block;background:#e8e8e8;color:#666}
-#sync.ok{background:#d4f7d4;color:#1c7c1c}
+#date{margin-top:8px;font-size:13px;padding:4px 12px;border-radius:12px;display:inline-block;background:#e8e8e8;color:#666}
 .wrap{max-width:640px;margin:0 auto;padding:0 14px}
 .cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}
 .card{border-radius:20px;padding:14px;text-align:center;box-shadow:0 3px 0 rgba(0,0,0,.12)}
@@ -30,7 +29,7 @@ section h2{font-size:18px;margin-bottom:10px}
 .restnote{margin-top:10px;font-size:14px;background:#fff;border-radius:12px;padding:8px 10px}
 .bar{background:#f0e6d8;border-radius:10px;height:24px;overflow:hidden;margin:8px 0}
 .bar span{display:block;height:100%;border-radius:10px;color:#fff;font-size:12px;line-height:24px;padding-left:8px;min-width:60px}
-#donut{width:150px;height:150px;border-radius:50%;margin:14px auto;position:relative;background:conic-gradient(#7ec8e3 0% 44%,#ff8fab 44% 86%,#b5e48c 86% 94%,#c8a2c8 94% 100%)}
+#donut{width:150px;height:150px;border-radius:50%;margin:14px auto;position:relative}
 #donut::after{content:"";position:absolute;inset:35px;background:#fff;border-radius:50%}
 table{width:100%;border-collapse:collapse;font-size:14px}
 td,th{padding:7px;border-bottom:1px solid #eee;text-align:left}
@@ -47,15 +46,15 @@ footer{text-align:center;padding:18px;font-size:13px;color:#8a7a70}
 <header>
 <div id="zebra" onclick="this.classList.add('spin');setTimeout(()=>this.classList.remove('spin'),600)">🦓</div>
 <h1>Бюджет группы «Зебрята»</h1>
-<div id="sync">данные от 02.11.2026</div>
+<div id="date"></div>
 </header>
 <div class="wrap">
 
 <div class="cards">
-<div class="card g1"><div class="t">🦓 Собрано</div><div class="n">52 733 ₽</div></div>
-<div class="card g2"><div class="t">🎈 Потрачено</div><div class="n">28 720 ₽</div></div>
-<div class="card g3"><div class="t">💰 Остаток</div><div class="n">24 013 ₽</div></div>
-<div class="card g4"><div class="t">🌟 Общий сбор</div><div class="n">3 000 ₽</div></div>
+<div class="card g1"><div class="t">🦓 Собрано</div><div class="n" id="n1"></div></div>
+<div class="card g2"><div class="t">🎈 Потрачено</div><div class="n" id="n2"></div></div>
+<div class="card g3"><div class="t">💰 Остаток</div><div class="n" id="n3"></div></div>
+<div class="card g4"><div class="t">🌟 Общий сбор</div><div class="n" id="n4"></div></div>
 </div>
 
 <section class="parentbox">
@@ -64,50 +63,26 @@ footer{text-align:center;padding:18px;font-size:13px;color:#8a7a70}
 <input id="fam" placeholder="Введите фамилию ребёнка (например: финаш)">
 <button onclick="check()">Проверить взнос</button>
 <div id="result"></div>
-<div class="restnote">💡 Осталось внести по всей группе: <b>2 522 ₽</b>. Перевод любой суммы — это уже помощь 💛</div>
+<div class="restnote" id="restnote"></div>
 </section>
 
 <section>
 <h2>📊 Траты по категориям</h2>
-<p style="font-size:12px;color:#999;margin-bottom:8px">Данные на 02.11.2026</p>
-<div class="bar"><span style="width:44%;background:#7ec8e3">Хозтовары — 8 165 ₽ (44%)</span></div>
-<div class="bar"><span style="width:42%;background:#ff8fab">Подарки — 7 811 ₽ (42%)</span></div>
-<div class="bar"><span style="width:8%;background:#b5e48c">Творчество — 1 544 ₽ (8%)</span></div>
-<div class="bar"><span style="width:6%;background:#c8a2c8">Угощение — 1 200 ₽ (6%)</span></div>
+<div id="bars"></div>
 <div id="donut"></div>
-<p style="text-align:center;font-size:12px;color:#999">Итого потрачено: 18 720 ₽ · на 1 ребёнка: 1 025,71 ₽</p>
+<p style="text-align:center;font-size:12px;color:#999" id="spentnote"></p>
 </section>
 
 <section>
 <h2>🎉 План праздников</h2>
 <table>
 <tr><th>Дата</th><th>Событие</th><th>План</th><th>Статус</th></tr>
-<tr><td>01.09.2026</td><td>Подарки детям на ДР</td><td>11 000 ₽</td><td>подарили ✅</td></tr>
-<tr><td>27.09.2026</td><td>День воспитателя</td><td>12 000 ₽</td><td>поздравили ✅</td></tr>
-<tr><td>25.12.2026</td><td>Новогодний утренник</td><td>15 000 ₽</td><td>в плане</td></tr>
-<tr><td>23.02.2027</td><td>День защитника Отечества</td><td>10 000 ₽</td><td>в плане</td></tr>
-<tr><td>08.03.2027</td><td>Международный женский день</td><td>15 000 ₽</td><td>в плане</td></tr>
-<tr><td>17.03.2027</td><td>День рождения воспитателя</td><td>8 000 ₽</td><td>в плане</td></tr>
-<tr><td>21.05.2027</td><td>День рождения нянечки</td><td>8 000 ₽</td><td>в плане</td></tr>
 </table>
 </section>
 
 <section>
 <h2>🎂 Именинники по месяцам</h2>
-<div class="months">
-<div class="month">❄️ Январь<br><b>2</b> 🎂</div>
-<div class="month">❄️ Февраль<br><b>2</b> 🎂</div>
-<div class="month">🌷 Март<br><b>2</b> 🎂</div>
-<div class="month">🌷 Апрель<br><b>0</b></div>
-<div class="month">🌞 Май<br><b>4</b> 🎂</div>
-<div class="month">🌞 Июнь<br><b>0</b></div>
-<div class="month">🍉 Июль<br><b>2</b> 🎂</div>
-<div class="month">🍉 Август<br><b>3</b> 🎂</div>
-<div class="month">🍂 Сентябрь<br><b>2</b> 🎂</div>
-<div class="month">🍂 Октябрь<br><b>5</b> 🎂</div>
-<div class="month cur">🍁 Ноябрь<br><b>5</b> 🎂</div>
-<div class="month">🎄 Декабрь<br><b>1</b> 🎂</div>
-</div>
+<div class="months" id="months"></div>
 <p style="font-size:12px;color:#999;margin-top:8px">Имена не публикуем — по правилам защиты персональных данных. Поздравить можно в чате группы!</p>
 </section>
 
@@ -125,64 +100,149 @@ footer{text-align:center;padding:18px;font-size:13px;color:#8a7a70}
 </div>
 
 <script>
-var FALLBACK={collected:52733,spent:28720,fee:3000,
-cats:[['Хозтовары',8165],['Подарки',7811],['Творчество',1544],['Угощение',1200]],
-status:{'абрамова':0,'акопян':0,'будник':0,'батенков':0,'ветрова':0,'нестерова':0,'игнатова':0,'карманова':0,'кошельник':0,'климков':0,'лазовская':0,'лысов':0,'караханов':0,'клепиков':0,'маслов':0,'минасян':0,'назаров':0,'ортукова':0,'семёнова':0,'семенова':0,'слобцова':1383,'стеценко':0,'урыта':0,'финашкина':252,'шарипов':252,'григорец':0,'точка':383,'ширенина':0}};
+/* ==================================================================== */
+/*  ╔══════════════════════════════════════════════════════════════╗  */
+/*  ║  ДАННЫЕ: МЕНЯЙТЕ ЦИФРЫ МЕЖДУ ЭТИМИ СТРОКАМИ                   ║  */
+/*  ║  Правьте только цифры и слова после знака =                   ║  */
+/*  ║  Эти строки-рамки с ║ и * не трогайте                         ║  */
+/*  ╚══════════════════════════════════════════════════════════════╝  */
+/* ==================================================================== */
 
-var DATA=FALLBACK;
-function fmt(n){return n.toLocaleString('ru-RU')+' \u20BD'}
-function check(){
- var v=document.getElementById('fam').value.trim().toLowerCase();
- var r=document.getElementById('result');
- if(!v){r.textContent='Введите фамилию 🙂';return}
- var found=null;
- for(var k in DATA.status){if(k.indexOf(v)>-1||v.indexOf(k)>-1){found=k;break}}
- if(found===null){r.textContent='Фамилия не найдена — проверьте написание или напишите администратору';return}
- var d=DATA.status[found];
- if(d>0){r.textContent='🟠 Есть недоплата — '+fmt(d)+'. Можно прислать любую сумму — мы её учтём 💛'}
- else{r.textContent='Всё сдано ✅';confetti()}
+var DATA = {
+
+  // --- ДЕНЬГИ ---
+  collected: 52733,   // собрано всего, в рублях
+  spent:     28720,   // потрачено всего, в рублях
+  fee:        3000,   // общий сбор на одного ребёнка
+
+  // --- ТРАТЫ ПО КАТЕГОРИЯМ ---
+  // название категории и сумма через запятую
+  cats: [
+    ['Хозтовары', 8165],
+    ['Подарки',   7811],
+    ['Творчество', 1544],
+    ['Угощение',   1200]
+  ],
+
+  // --- ПЛАН ПРАЗДНИКОВ ---
+  // 'дата', 'событие', сумма, 'статус' (в плане / поздравили ✅ / подарили ✅)
+  events: [
+    ['01.09.2026','Подарки детям на ДР',11000,'подарили ✅'],
+    ['27.09.2026','День воспитателя',12000,'поздравили ✅'],
+    ['25.12.2026','Новогодний утренник',15000,'в плане'],
+    ['23.02.2027','День защитника Отечества',10000,'в плане'],
+    ['08.03.2027','Международный женский день',15000,'в плане'],
+    ['17.03.2027','День рождения воспитателя',8000,'в плане'],
+    ['21.05.2027','День рождения нянечки',8000,'в плане']
+  ],
+
+  // --- ИМЕНИННИКИ ПО МЕСЯЦАМ ---
+  // цифра = сколько дней рождения в этом месяце
+  birthdays: [
+    ['❄️ Январь',2],['❄️ Февраль',2],['🌷 Март',2],
+    ['🌷 Апрель',0],['🌞 Май',4],['🌞 Июнь',0],
+    ['🍉 Июль',2],['🍉 Август',3],['🍂 Сентябрь',2],
+    ['🍂 Октябрь',5],['🍁 Ноябрь',5],['🎄 Декабрь',1]
+  ],
+
+  // --- СТАТУСЫ ВЗНОСОВ ---
+  // фамилия (маленькими буквами) и сколько осталось доплатить
+  // 0 = всё сдано. Например: 'финашкина': 252
+  status: {
+    'абрамова':0,'акопян':0,'будник':0,'батенков':0,
+    'ветрова':0,'нестерова':0,'игнатова':0,'карманова':0,
+    'кошельник':0,'климков':0,'лазовская':0,'лысов':0,
+    'караханов':0,'клепиков':0,'маслов':0,'минасян':0,
+    'назаров':0,'ортукова':0,'семёнова':0,'семенова':0,
+    'слобцова':1383,'стеценко':0,'урыта':0,'финашкина':252,
+    'шарипов':252,'григорец':0,'точка':383,'ширенина':0
+  },
+
+  // --- ДАТА ОБНОВЛЕНИЯ (видна в шапке) ---
+  updated: '02.11.2026'
+};
+
+/* ==================================================================== */
+/*  ╔══════════════════════════════════════════════════════════════╗  */
+/*  ║  КОНЕЦ ДАННЫХ. НИЖЕ НИЧЕГО НЕ ТРОГАЕТЕ                        ║  */
+/*  ╚══════════════════════════════════════════════════════════════╝  */
+/* ==================================================================== */
+
+function fmt(n){return Math.round(n).toLocaleString('ru-RU')+' \u20BD'}
+
+function render(){
+  var kids = Object.keys(DATA.status).length;
+  var rest = DATA.collected - DATA.spent;
+  var need = 0;
+  for (var k in DATA.status) need += DATA.status[k];
+
+  document.getElementById('n1').textContent = fmt(DATA.collected);
+  document.getElementById('n2').textContent = fmt(DATA.spent);
+  document.getElementById('n3').textContent = fmt(rest);
+  document.getElementById('n4').textContent = fmt(DATA.fee);
+  document.getElementById('date').textContent = 'данные от ' + DATA.updated;
+  document.getElementById('restnote').innerHTML =
+    '💡 Осталось внести по всей группе: <b>' + fmt(need) + '</b>. Перевод любой суммы — это уже помощь 💛';
+
+  var total = 0, colors = ['#7ec8e3','#ff8fab','#b5e48c','#c8a2c8','#ffd166','#a0e7a0'];
+  DATA.cats.forEach(function(c){total += c[1]});
+  var bars = '', stops = [], acc = 0;
+  DATA.cats.forEach(function(c,i){
+    var pct = total ? c[1]/total*100 : 0;
+    bars += '<div class="bar"><span style="width:'+Math.max(pct,8)+'%;background:'+colors[i%colors.length]+'">'+
+            c[0]+' — '+fmt(c[1])+' ('+Math.round(pct)+'%)</span></div>';
+    stops.push(colors[i%colors.length]+' '+acc.toFixed(1)+'% '+(acc+pct).toFixed(1)+'%');
+    acc += pct;
+  });
+  document.getElementById('bars').innerHTML = bars;
+  document.getElementById('donut').style.background = 'conic-gradient('+stops.join(',')+')';
+  document.getElementById('spentnote').textContent =
+    'Итого потрачено: '+fmt(total)+' · на 1 ребёнка: '+(kids? (total/kids).toFixed(2):'—')+' ₽';
+
+  var rows = DATA.events.map(function(e){
+    return '<tr><td>'+e[0]+'</td><td>'+e[1]+'</td><td>'+fmt(e[2])+'</td><td>'+e[3]+'</td></tr>';
+  }).join('');
+  document.querySelector('table').insertAdjacentHTML('beforeend', rows);
+
+  var now = new Date().getMonth();
+  document.getElementById('months').innerHTML = DATA.birthdays.map(function(m,i){
+    var cls = (i===now)?'month cur':'month';
+    return '<div class="'+cls+'">'+m[0]+'<br><b>'+m[1]+'</b>'+(m[1]?' 🎂':'')+'</div>';
+  }).join('');
 }
+
 function confetti(){
- var e=['\u{1F389}','\u2728','\u{1F49B}','\u{1F993}'];
- for(var i=0;i<24;i++){var s=document.createElement('div');s.className='confetti';
- s.textContent=e[i%e.length];
- s.style.left=Math.random()*100+'vw';
- s.style.animationDelay=(Math.random()*0.8)+'s';
- document.body.appendChild(s);setTimeout(function(){s.remove()},3400)}
+  var e = ['\u{1F389}','\u2728','\u{1F49B}','\u{1F993}'];
+  for (var i=0;i<24;i++){
+    var s = document.createElement('div');
+    s.className='confetti'; s.textContent = e[i%e.length];
+    s.style.left = Math.random()*100+'vw';
+    s.style.animationDelay = (Math.random()*0.8)+'s';
+    document.body.appendChild(s);
+    setTimeout(function(){s.remove()},3400);
+  }
 }
-function parse(txt){
- var d={collected:0,spent:0,fee:0,cats:[],status:{}},sec='';
- txt.split(/\r?\n/).forEach(function(l){
- l=l.trim();if(!l)return;
- if(l[0]==='['){sec=l.replace(/[\[\]]/g,'').toUpperCase();return}
- var p=l.split('=');if(p.length<2)return;var k=p[0].trim().toLowerCase(),v=p[1].trim();
- if(sec==='ФИНАНСЫ'){if(k==='collected')d.collected=+v;if(k==='spent')d.spent=+v;if(k==='fee')d.fee=+v}
- if(sec==='КАТЕГОРИИ')d.cats.push([k,+v]);
- if(sec==='СТАТУСЫ')d.status[k]=+v});
- return d;
+
+function check(){
+  var v = document.getElementById('fam').value.trim().toLowerCase();
+  var r = document.getElementById('result');
+  if (!v){ r.textContent='Введите фамилию 🙂'; return }
+  var found = null;
+  for (var k in DATA.status){
+    if (k.indexOf(v)>-1 || v.indexOf(k)>-1){ found = k; break }
+  }
+  if (found === null){
+    r.textContent = 'Фамилия не найдена — проверьте написание или напишите администратору'; return
+  }
+  var d = DATA.status[found];
+  if (d > 0){
+    r.textContent = '🟠 Есть недоплата — '+fmt(d)+'. Можно прислать любую сумму — мы её учтём 💛'
+  } else {
+    r.textContent = 'Всё сдано ✅'; confetti()
+  }
 }
-function apply(d){
- DATA.collected=d.collected||DATA.collected;
- DATA.spent=d.spent||DATA.spent;
- DATA.fee=d.fee||DATA.fee;
- if(d.cats.length)DATA.cats=d.cats;
- var st=d.status||{};for(var k in st)DATA.status[k]=st[k];
- document.querySelector('.g1 .n').textContent=fmt(DATA.collected);
- document.querySelector('.g2 .n').textContent=fmt(DATA.spent);
- document.querySelector('.g3 .n').textContent=fmt(DATA.collected-DATA.spent);
- document.querySelector('.g4 .n').textContent=fmt(DATA.fee);
-}
-async function sync(){
- var b=document.getElementById('sync');
- try{
- var r=await fetch('https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key='+encodeURIComponent('https://disk.yandex.ru/i/jgpvcCkEytiMiQ'));
- var j=await r.json();
- var res=await fetch(j.href);var txt=await res.text();
- var d=parse(txt);
- if(d.collected>0){apply(d);b.textContent='обновлено с Диска: '+new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});b.className='ok'}
- }catch(e){/* остаются вшитые данные */}
-}
-sync();
+
+render();
 </script>
 </body>
 </html>
