@@ -13,7 +13,7 @@ header h1{color:#fff;text-shadow:0 2px 4px #000;font-size:26px}
 @keyframes hop{0%,100%{transform:translateY(0)}30%{transform:translateY(-14px) rotate(-4deg)}60%{transform:translateY(0)}}
 .spin{animation:spin .6s linear!important}
 @keyframes spin{to{transform:rotate(360deg)}}
-#sync{margin-top:8px;font-size:13px;padding:4px 12px;border-radius:12px;display:inline-block;background:#e8e8e8;color:#666;max-width:95%}
+#sync{margin-top:8px;font-size:12px;padding:4px 12px;border-radius:12px;display:inline-block;background:#e8e8e8;color:#666;max-width:95%;word-break:break-word}
 #sync.ok{background:#d4f7d4;color:#1c7c1c}
 #sync.err{background:#ffd6d6;color:#a11}
 .wrap{max-width:640px;margin:0 auto;padding:0 14px}
@@ -100,9 +100,7 @@ footer{text-align:center;padding:18px;font-size:13px;color:#8a7a70}
 </div>
 
 <script>
-// ============ ССЫЛКА НА ФАЙЛ ДАННЫХ НА ДИСКЕ (уже вшита) ============
 var DISK_URL = "https://disk.yandex.ru/i/jgpvcCkEytiMiQ";
-// =====================================================================
 
 var DATA={
 collected:52733,spent:28720,fee:3000,
@@ -114,6 +112,8 @@ months:[["Январь",2],["Февраль",2],["Март",2],["Апрель",0
 
 var COLORS=["#ff8fab","#7ec8e3","#b5e48c","#c8a2c8","#ffd166","#9bd0a5"];
 function fmt(n){return Math.round(n).toLocaleString("ru-RU")+" \u20BD"}
+function snip(s){s=String(s||"");return s.length>90?s.slice(0,90)+"…":s}
+function badge(txt,cls){var b=document.getElementById("sync");b.textContent=txt;b.className=cls}
 function render(){
  document.getElementById("c1").textContent=fmt(DATA.collected);
  document.getElementById("c2").textContent=fmt(DATA.spent);
@@ -191,29 +191,27 @@ function apply(d){
  for(var k in d.status)DATA.status[k]=d.status[k];
  render();
 }
-function badge(txt,cls){var b=document.getElementById("sync");b.textContent=txt;b.className=cls}
 function sync(){
  var API="https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key="+encodeURIComponent(DISK_URL);
- fetch(API,{referrerPolicy:"no-referrer",cache:"no-store"})
- .then(function(r){
- if(!r.ok)throw new Error("Диск ответил "+r.status);
- return r.json()})
- .then(function(j){
- if(!j.href)throw new Error("Диск не дал ссылку на файл");
- return fetch(j.href,{referrerPolicy:"no-referrer",cache:"no-store"})})
- .then(function(r){
- if(!r.ok)throw new Error("файл не скачался: "+r.status);
- return r.text()})
- .then(function(t){
- var d=parse(t);
+ fetch(API,{referrerPolicy:"no-referrer",cache:"no-store",headers:{"Accept":"application/json"}})
+ .then(function(r){return r.text().then(function(t){return{ok:r.ok,status:r.status,body:t}})})
+ .then(function(x){
+ if(!x.ok)throw new Error("Диск ответил "+x.status+": "+snip(x.body));
+ var j;try{j=JSON.parse(x.body)}catch(e){throw new Error("неожиданный ответ: "+snip(x.body))}
+ if(j.error)throw new Error("Диск: "+j.error+(j.description?" — "+j.description:""));
+ if(!j.href)throw new Error("в ответе нет ссылки: "+snip(x.body));
+ return fetch(j.href,{referrerPolicy:"no-referrer",cache:"no-store"})
+ .then(function(r){return r.text().then(function(t){return{ok:r.ok,status:r.status,body:t}})})
+ .then(function(f){
+ if(!f.ok)throw new Error("файл не скачался: "+f.status);
+ var d=parse(f.body);
  if(d.collected>0||d.cats.length||Object.keys(d.status).length){
  apply(d);
  badge("обновлено с Диска: "+new Date().toLocaleTimeString("ru-RU",{hour:"2-digit",minute:"2-digit"}),"ok");
  }else{badge("файл на Диске пустой или без секций","err")}
- })
- .catch(function(e){
- badge("Диск недоступен: "+e.message+". Показаны запасные данные","err");
  });
+ })
+ .catch(function(e){badge(e.message+". Показаны запасные данные","err")});
 }
 render();
 sync();
